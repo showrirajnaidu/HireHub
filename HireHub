@@ -1,0 +1,72 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+
+const jobsData = [
+  { id: 1, title: "Software Developer", company: "TechCorp", experience: 2, location: "Remote" },
+  { id: 2, title: "Data Analyst", company: "Insight Ltd", experience: 1, location: "Bangalore" },
+  { id: 3, title: "Project Manager", company: "BuildRight", experience: 5, location: "Hyderabad" },
+  { id: 4, title: "Frontend Developer", company: "Webify", experience: 3, location: "Remote" },
+  { id: 5, title: "Technical Support", company: "CloudNet", experience: 0, location: "Chennai" }
+];
+
+export default function JobSearchApp() {
+  const [keyword, setKeyword] = useState("");
+  const [experience, setExperience] = useState("all");
+
+  const filteredJobs = jobsData.filter((job) => {
+    const keywordMatch = job.title.toLowerCase().includes(keyword.toLowerCase());
+    const expMatch = experience === "all" || job.experience <= Number(experience);
+    return keywordMatch && expMatch;
+  });
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">Simple Job Finder</h1>
+
+        <Card className="mb-6">
+          <CardContent className="p-4 grid md:grid-cols-3 gap-4">
+            <Input
+              placeholder="Search job title..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+            />
+
+            <Select onValueChange={setExperience}>
+              <SelectTrigger>
+                <SelectValue placeholder="Max Experience" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="1">1 year</SelectItem>
+                <SelectItem value="3">3 years</SelectItem>
+                <SelectItem value="5">5 years</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button onClick={() => { setKeyword(""); setExperience("all"); }}>
+              Reset Filters
+            </Button>
+          </CardContent>
+        </Card>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          {filteredJobs.map((job) => (
+            <Card key={job.id} className="hover:shadow-xl transition">
+              <CardContent className="p-4">
+                <h2 className="text-xl font-semibold">{job.title}</h2>
+                <p className="text-gray-600">{job.company}</p>
+                <p className="text-sm mt-2">Experience Required: {job.experience}+ years</p>
+                <p className="text-sm">Location: {job.location}</p>
+                <Button className="mt-3">Apply</Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
